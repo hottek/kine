@@ -38,3 +38,13 @@ package:
 
 .PHONY: ci
 ci: validate build package
+
+.PHONY: build-darwin
+build-darwin:
+	@echo Building Kine for darwin/arm64
+	@mkdir -p bin
+	@source scripts/version && \
+	export GOOS=darwin && \
+	export GOARCH=arm64 && \
+	LINKFLAGS="-X github.com/k3s-io/kine/pkg/version.Version=$${VERSION} -X github.com/k3s-io/kine/pkg/version.GitCommit=$${COMMIT}" && \
+	CGO_CFLAGS="-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_USE_ALLOCA=1" go build -ldflags "$${LINKFLAGS}" -tags nats -o bin/kine-darwin-arm64
